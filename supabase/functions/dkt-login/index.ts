@@ -97,9 +97,23 @@ Deno.serve(async (req) => {
         password: passwort,
       });
 
-    if (error || !data.session) {
-      return antwort("Benutzername oder Passwort falsch", 401);
+   
+if (error || !data.session) {
+  // Fehlgeschlagenen Anmeldeversuch speichern.
+  const { error: protokollFehler } = await admin.rpc(
+    "dkt_login_fehlversuch",
+    {
+      p_benutzername: benutzername,
     }
+  );
+
+  if (protokollFehler) {
+    throw new Error("Login-Fehlversuch konnte nicht gespeichert werden");
+  }
+
+  return antwort("Benutzername oder Passwort falsch", 401);
+}
+
 
     return new Response(
       JSON.stringify({
