@@ -59,6 +59,23 @@ Deno.serve(async (req) => {
       return antwort("Benutzername oder Passwort falsch", 401);
     }
 
+    // Prüfen, ob der Benutzer vorübergehend gesperrt ist.
+    const { data: gesperrt, error: sperrFehler } =
+      await admin.rpc("dkt_login_gesperrt", {
+        p_benutzername: benutzername,
+      });
+
+    if (sperrFehler) {
+      throw new Error("Login-Sperrprüfung fehlgeschlagen");
+    }
+
+    if (gesperrt === true) {
+      return antwort(
+        "Zu viele Anmeldeversuche. Bitte in 15 Minuten erneut versuchen.",
+        429
+      );
+    }
+
     // Zugehöriges Supabase-Auth-Konto abrufen.
     const { data: konto, error: kontoFehler } =
       await admin.auth.admin.getUserById(
