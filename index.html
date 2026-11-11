@@ -1,0 +1,243 @@
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b1220">
+  <title>DKT Werkstatt – Mitarbeiter-App</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: #0b1220;
+      color: #f1f5f9;
+      font-family: Arial, sans-serif;
+    }
+
+    header {
+      padding: 24px 20px;
+      background: #111d30;
+      border-bottom: 2px solid #2389e8;
+      text-align: center;
+    }
+
+    .logo {
+      color: #65b8ff;
+      font-size: 36px;
+      font-weight: bold;
+      letter-spacing: 4px;
+    }
+
+    .subtitle {
+      color: #b5c5d6;
+      margin-top: 6px;
+      font-size: 13px;
+    }
+
+    main {
+      max-width: 520px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    h1 { font-size: 22px; }
+    h2 { font-size: 18px; margin-top: 0; }
+
+    .card {
+      background: #17263b;
+      border: 1px solid #31445e;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+
+    .muted {
+      color: #b5c5d6;
+      font-size: 14px;
+    }
+
+    button {
+      border: none;
+      border-radius: 10px;
+      padding: 14px;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+      color: white;
+      background: #1678cf;
+    }
+
+    button:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .buttons button { flex: 1; }
+
+    .secondary { background: #43546a; }
+    .success { background: #16845c; }
+    .warning { background: #b47717; }
+
+    .job {
+      padding: 14px 0;
+      border-top: 1px solid #31445e;
+    }
+
+    .job strong { display: block; margin-bottom: 6px; }
+
+    .status {
+      display: inline-block;
+      padding: 5px 9px;
+      border-radius: 20px;
+      background: #31445e;
+      font-size: 12px;
+      margin: 8px 0;
+    }
+
+    .full { width: 100%; margin-top: 10px; }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      color: #8497ad;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">DKT</div>
+  <div class="subtitle">WERKSTATT · MITARBEITER-APP</div>
+</header>
+
+<main>
+  <h1>Hallo, Test Mitarbeiter!</h1>
+  <p class="muted">Willkommen in deiner Werkstatt-App.</p>
+
+  <section class="card">
+    <h2>Arbeitszeiterfassung</h2>
+    <p id="arbeitsstatus">Aktuell nicht eingestempelt</p>
+
+    <div class="buttons">
+      <button id="start" onclick="einstempeln()">
+        Einstempeln
+      </button>
+      <button id="ende" class="secondary"
+              onclick="ausstempeln()" disabled>
+        Ausstempeln
+      </button>
+    </div>
+
+    <p class="muted" id="startzeit"></p>
+  </section>
+
+  <section class="card">
+    <h2>Meine heutigen Aufträge</h2>
+
+    <div class="job">
+      <strong>08:00 – Inspektion VW Golf</strong>
+      <span class="muted">Ölwechsel und Sichtprüfung</span>
+      <div class="status" id="status1">Offen</div>
+      <button class="full" onclick="statusWechseln(1)">
+        Status ändern
+      </button>
+    </div>
+
+    <div class="job">
+      <strong>11:00 – Bremsen BMW 3er</strong>
+      <span class="muted">Bremsbeläge vorne erneuern</span>
+      <div class="status" id="status2">Offen</div>
+      <button class="full" onclick="statusWechseln(2)">
+        Status ändern
+      </button>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Abwesenheit</h2>
+    <div class="buttons">
+      <button onclick="meldung('Urlaubsantrag')">
+        Urlaub beantragen
+      </button>
+      <button class="warning"
+              onclick="meldung('Krankmeldung')">
+        Krankmelden
+      </button>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Mein Profil</h2>
+    <p>Test Mitarbeiter</p>
+    <p class="muted">Wochenarbeitszeit: 40 Stunden</p>
+  </section>
+</main>
+
+<footer>
+  DKT-Werkstatt · Demo-Version mit Testdaten
+</footer>
+
+<script>
+  let eingestempelt = false;
+
+  const statusListe = [
+    "Offen",
+    "In Arbeit",
+    "Pausiert",
+    "Erledigt"
+  ];
+
+  function einstempeln() {
+    eingestempelt = true;
+    document.getElementById("arbeitsstatus").textContent =
+      "Du bist eingestempelt";
+
+    document.getElementById("startzeit").textContent =
+      "Beginn: " + new Date().toLocaleTimeString("de-DE", {
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+
+    document.getElementById("start").disabled = true;
+    document.getElementById("ende").disabled = false;
+  }
+
+  function ausstempeln() {
+    eingestempelt = false;
+    document.getElementById("arbeitsstatus").textContent =
+      "Aktuell nicht eingestempelt";
+
+    document.getElementById("startzeit").textContent = "";
+    document.getElementById("start").disabled = false;
+    document.getElementById("ende").disabled = true;
+  }
+
+  function statusWechseln(nummer) {
+    const element = document.getElementById(
+      "status" + nummer
+    );
+
+    const aktuell = statusListe.indexOf(element.textContent);
+    const naechster = (aktuell + 1) % statusListe.length;
+
+    element.textContent = statusListe[naechster];
+  }
+
+  function meldung(art) {
+    alert(
+      art + ": Das Formular bauen wir im nächsten Schritt."
+    );
+  }
+</script>
+
+</body>
+</html>
